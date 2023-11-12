@@ -7,7 +7,7 @@ import (
 
 	"github.com/Michaelpalacce/goip/pkg/goip/clients"
 	"github.com/Michaelpalacce/goip/pkg/goip/logger"
-	"github.com/Michaelpalacce/goip/pkg/goip/network"
+	"github.com/Michaelpalacce/goip/pkg/goip/watcher"
 )
 
 func main() {
@@ -17,45 +17,25 @@ func main() {
 	// Parse arguments
 	var (
 		provider string
+		interval int
+		client   clients.Client
+		err      error
 	)
 
 	flag.StringVar(&provider, "provider", "cloudflare", "Which provider to use? Available: cloudflare,")
+	flag.IntVar(&interval, "interval", 15, "How often to check for updates?")
 	flag.Parse()
 
 	// Create provider
 	slog.Info("Provider chosen", "provider", provider)
 
-	var client clients.Client
-
-	switch provider {
-	case "cloudflare":
-		client = &clients.Cloudflare{}
-	default:
-		log.Fatalf("could not create a provider of type: %s", provider)
+	if client, err = clients.CreateClientBasedOnProvider(provider); err != nil {
+		log.Fatalf("error creating the client for %s. Error was: %s", provider, err)
 	}
 
-	if err := client.CheckEnv(); err != nil {
-		log.Fatalf("error while validating provider (%s) environment: %s", provider, err)
+	watcher := watcher.Watcher{
+		Client: client,
 	}
 
-	if err := client.Auth(); err != nil {
-		log.Fatalf("error while trying to auth: %s", err)
-	}
-
-	// Fetch public IP
-	var (
-		publicIp []byte
-		err      error
-	)
-
-	if publicIp, err = network.GetPublicIp(); err != nil {
-		log.Fatalf("Error while trying to fetch public IP: %s", err)
-	}
-
-	slog.Info("Fetched public IP from https://icanhazip.com", "publicIp", string(publicIp))
-
-	// Set the fetched ip to the records
-	if err := client.SetIp(string(publicIp)); err != nil {
-		log.Fatalf("Error while setting ip: %s", err)
-	}
+	watcher.Watch(interval)
 }

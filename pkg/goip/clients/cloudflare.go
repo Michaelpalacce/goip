@@ -32,11 +32,12 @@ type CloudflareConfig struct {
 
 // Cloudflare is the Cloudflare client that will support Authentication and setting records
 type Cloudflare struct {
-	api *cloudflare.API
+	api    *cloudflare.API
+	config CloudflareConfig
 }
 
 // CheckEnv validates that everything needed is present
-func (c Cloudflare) CheckEnv() error {
+func (c *Cloudflare) CheckEnv() error {
 	tokens := []string{"CLOUDFLARE_API_TOKEN"}
 
 	for _, token := range tokens {
@@ -45,6 +46,19 @@ func (c Cloudflare) CheckEnv() error {
 		if !exists {
 			return fmt.Errorf("%s not set", token)
 		}
+	}
+
+	var (
+		data []byte
+		err  error
+	)
+
+	if data, err = fs.ReadConfigFile(); err != nil {
+		return err
+	}
+
+	if err := json.Unmarshal(data, &c.config); err != nil {
+		return err
 	}
 
 	return nil
@@ -59,30 +73,15 @@ func (c *Cloudflare) Auth() error {
 	}
 
 	c.api = api
+
 	return nil
 }
 
 // SetIp sets the IP for the given zones based on the configuration
 func (c Cloudflare) SetIp(ip string) error {
-	var (
-		data []byte
-		err  error
-	)
-
-	// @TODO Where to get this from?
-	if data, err = fs.ReadJsonFile("./config.json"); err != nil {
-		return err
-	}
-
-	var config CloudflareConfig
-
-	if err := json.Unmarshal(data, &config); err != nil {
-		return err
-	}
-
-	zones := config.Cloudflare.Zones
-	for _, zone := range zones {
+	for _, zone := range c.config.Cloudflare.Zones {
 		slog.Debug("Setting IP for zone", "zone", zone.Name)
+
 		if err := c.setIpForZone(ip, zone); err != nil {
 			return err
 		}
