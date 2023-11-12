@@ -57,6 +57,8 @@ func (c *Cloudflare) CheckEnv() error {
 		return err
 	}
 
+	fmt.Print(string(data))
+
 	if err := json.Unmarshal(data, &c.config); err != nil {
 		return err
 	}

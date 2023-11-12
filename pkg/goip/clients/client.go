@@ -11,6 +11,7 @@ type Client interface {
 	CheckEnv() error
 }
 
+// CreateClientBasedOnProvider will return an authenticated, fully loaded client
 func CreateClientBasedOnProvider(provider string) (Client, error) {
 	var client Client
 	switch provider {

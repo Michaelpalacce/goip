@@ -19,6 +19,14 @@ The configuration file for the providers must be stored either in `/app/config.j
 
 ## Getting Started
 
+### Docker
+
+```bash
+docker run -e CLOUDFLARE_API_TOKEN={{TOKEN}} -v ./config.json:/app/config.json stefangenov/goip
+```
+
+### From Source
+
 ```bash
 go run main.go
 ```
