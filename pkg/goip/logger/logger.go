@@ -1,4 +1,4 @@
-package goip
+package logger
 
 import (
 	"log/slog"

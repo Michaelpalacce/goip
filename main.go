@@ -5,13 +5,13 @@ import (
 	"log"
 	"log/slog"
 
-	"github.com/Michaelpalacce/goip/internal/goip"
 	"github.com/Michaelpalacce/goip/pkg/goip/clients"
+	"github.com/Michaelpalacce/goip/pkg/goip/logger"
 	"github.com/Michaelpalacce/goip/pkg/goip/network"
 )
 
 func main() {
-	goip.ConfigureLogging()
+	logger.ConfigureLogging()
 
 	var (
 		provider string
