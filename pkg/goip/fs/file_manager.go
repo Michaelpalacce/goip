@@ -6,6 +6,7 @@ import (
 	"os"
 )
 
+// Reads a file and returns the content as well as an error if any
 func ReadJsonFile(path string) ([]byte, error) {
 	jsonFile, err := os.Open(path)
 

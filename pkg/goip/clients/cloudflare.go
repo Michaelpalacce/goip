@@ -11,27 +11,31 @@ import (
 	"github.com/cloudflare/cloudflare-go"
 )
 
+// Record represents one Zone Record
 type Record struct {
 	Name    string `json:"name"`
 	Proxied bool   `json:"proxied"`
 }
 
+// Zone (s) are how Cloudflare separates different DNS endpoints
 type Zone struct {
 	Name    string   `json:"name"`
 	Records []Record `json:"records"`
 }
 
+// CloudflareConfig is the structure of the json config that is expected
 type CloudflareConfig struct {
 	Cloudflare struct {
 		Zones []Zone `json:"zones"`
 	} `json:"cloudflare"`
 }
 
+// Cloudflare is the Cloudflare client that will support Authentication and setting records
 type Cloudflare struct {
 	api *cloudflare.API
 }
 
-// Validate that everything needed is present
+// CheckEnv validates that everything needed is present
 func (c Cloudflare) CheckEnv() error {
 	tokens := []string{"CLOUDFLARE_API_TOKEN"}
 
@@ -58,7 +62,7 @@ func (c *Cloudflare) Auth() error {
 	return nil
 }
 
-// Sets the IP for the given zones based on the configuration
+// SetIp sets the IP for the given zones based on the configuration
 func (c Cloudflare) SetIp(ip string) error {
 	var (
 		data []byte
@@ -87,7 +91,7 @@ func (c Cloudflare) SetIp(ip string) error {
 	return nil
 }
 
-// Sets the public ip for a specific zone
+// setIpForZone sets the public ip for a specific zone
 func (c Cloudflare) setIpForZone(ip string, zone Zone) error {
 	zoneID, err := c.api.ZoneIDByName(zone.Name)
 	if err != nil {
@@ -103,7 +107,7 @@ func (c Cloudflare) setIpForZone(ip string, zone Zone) error {
 	return nil
 }
 
-// Given the specific record, update it
+// setIpForRecord will update the specific record
 func (c Cloudflare) setIpForRecord(ip string, zoneID string, record Record) error {
 	records, _, err := c.api.ListDNSRecords(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.ListDNSRecordsParams{})
 	if err != nil {

@@ -6,6 +6,8 @@ import (
 	"net/http"
 )
 
+// GetBody does a Get request on the given url and returns the body in a []byte.
+// Will also close the ReadStream
 func GetBody(url string) ([]byte, error) {
 	if resp, err := http.Get(url); err == nil {
 		defer resp.Body.Close()

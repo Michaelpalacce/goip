@@ -8,7 +8,8 @@ import (
 	"github.com/lmittmann/tint"
 )
 
-// ConfigureLogging will set a default logger
+// ConfigureLogging will set a default logger to have colors
+// Utilizes tint
 func ConfigureLogging() {
 	w := os.Stderr
 

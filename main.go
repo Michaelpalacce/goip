@@ -11,8 +11,10 @@ import (
 )
 
 func main() {
+	// Configure Logging
 	logger.ConfigureLogging()
 
+	// Parse arguments
 	var (
 		provider string
 	)
@@ -20,6 +22,7 @@ func main() {
 	flag.StringVar(&provider, "provider", "cloudflare", "Which provider to use? Available: cloudflare,")
 	flag.Parse()
 
+	// Create provider
 	slog.Info("Provider chosen", "provider", provider)
 
 	var client clients.Client
@@ -39,6 +42,7 @@ func main() {
 		log.Fatalf("error while trying to auth: %s", err)
 	}
 
+	// Fetch public IP
 	var (
 		publicIp []byte
 		err      error
@@ -50,6 +54,7 @@ func main() {
 
 	slog.Info("Fetched public IP from https://icanhazip.com", "publicIp", string(publicIp))
 
+	// Set the fetched ip to the records
 	if err := client.SetIp(string(publicIp)); err != nil {
 		log.Fatalf("Error while setting ip: %s", err)
 	}
