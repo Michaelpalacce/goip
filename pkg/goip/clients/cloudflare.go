@@ -1,4 +1,4 @@
-package cloudflare
+package clients
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/Michaelpalacce/goip/internal/goip"
+	"github.com/Michaelpalacce/goip/pkg/goip/fs"
 	"github.com/cloudflare/cloudflare-go"
 )
 
@@ -66,7 +66,7 @@ func (c Cloudflare) SetIp(ip string) error {
 	)
 
 	// @TODO Where to get this from?
-	if data, err = goip.ReadJsonFile("./config.json"); err != nil {
+	if data, err = fs.ReadJsonFile("./config.json"); err != nil {
 		return err
 	}
 

@@ -7,7 +7,7 @@ import (
 
 	"github.com/Michaelpalacce/goip/internal/goip"
 	"github.com/Michaelpalacce/goip/pkg/goip/clients"
-	"github.com/Michaelpalacce/goip/pkg/goip/clients/cloudflare"
+	"github.com/Michaelpalacce/goip/pkg/goip/network"
 )
 
 func main() {
@@ -26,7 +26,7 @@ func main() {
 
 	switch provider {
 	case "cloudflare":
-		client = &cloudflare.Cloudflare{}
+		client = &clients.Cloudflare{}
 	default:
 		log.Fatalf("could not create a provider of type: %s", provider)
 	}
@@ -44,7 +44,7 @@ func main() {
 		err      error
 	)
 
-	if publicIp, err = goip.GetPublicIp(); err != nil {
+	if publicIp, err = network.GetPublicIp(); err != nil {
 		log.Fatalf("Error while trying to fetch public IP: %s", err)
 	}
 

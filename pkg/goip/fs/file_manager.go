@@ -1,4 +1,4 @@
-package goip
+package fs
 
 import (
 	"io"
