@@ -14,8 +14,8 @@ The configuration file for the providers must be stored either in `/app/config.j
 ## Roadmap
 
 - [ ] More providers?
-- [ ] Container Image
-- [ ] More details how to run this
+- [x] Container Image
+- [x] More details how to run this
 
 ## Getting Started
 
