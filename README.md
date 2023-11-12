@@ -55,14 +55,14 @@ The following env variables must be present:
     "cloudflare": {
         "zones": [
             {
-                "name": "stefangenov.site",
+                "name": "mywebsite.com",
                 "records": [
                     {
-                        "name": "stefangenov.site",
+                        "name": "mywebsite.com",
                         "proxied": true
                     },
                     {
-                        "name": "*-public.stefangenov.site",
+                        "name": "subdomain.mywebsite.com",
                         "proxied": true
                     }
                 ]
@@ -70,4 +70,5 @@ The following env variables must be present:
         ]
     }
 }
+
 ```
