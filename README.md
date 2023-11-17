@@ -14,8 +14,9 @@ The configuration file for the providers must be stored either in `/app/config.j
 ## Roadmap
 
 - [ ] More providers?
-- [ ] Container Image
-- [ ] More details how to run this
+- [x] Container Image
+- [x] More details how to run this
+- [ ] Fallback to `https://ifconfig.me/ip`
 
 ## Getting Started
 
@@ -64,14 +65,14 @@ The following env variables must be present:
     "cloudflare": {
         "zones": [
             {
-                "name": "stefangenov.site",
+                "name": "mywebsite.com",
                 "records": [
                     {
-                        "name": "stefangenov.site",
+                        "name": "mywebsite.com",
                         "proxied": true
                     },
                     {
-                        "name": "*-public.stefangenov.site",
+                        "name": "subdomain.mywebsite.com",
                         "proxied": true
                     }
                 ]
@@ -79,4 +80,5 @@ The following env variables must be present:
         ]
     }
 }
+
 ```

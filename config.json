@@ -2,14 +2,14 @@
     "cloudflare": {
         "zones": [
             {
-                "name": "stefangenov.site",
+                "name": "mywebsite.com",
                 "records": [
                     {
-                        "name": "stefangenov.site",
+                        "name": "mywebsite.com",
                         "proxied": true
                     },
                     {
-                        "name": "*-public.stefangenov.site",
+                        "name": "subdomain.mywebsite.com",
                         "proxied": true
                     }
                 ]
