@@ -47,6 +47,7 @@ func (w *Watcher) Watch(interval int) {
 					slog.Error("error while trying to set IP", "IP", ipToSet, "Error", err)
 				}
 
+                // Notify if a notifier exists
 				if w.Notifier != nil {
 					if err := w.Notifier.Notify(w.ip); err != nil {
 						slog.Error("error while notify for IP change", "IP", ipToSet, "Error", err)

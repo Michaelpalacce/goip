@@ -16,7 +16,8 @@ The configuration file for the providers must be stored either in `/app/config.j
 - [ ] More providers?
 - [x] Container Image
 - [x] More details how to run this
-- [ ] Fallback to `https://ifconfig.me/ip`
+- [x] Notifications
+- [x] Fallback to `https://ifconfig.me/ip`
 
 ## Getting Started
 

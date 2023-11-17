@@ -12,17 +12,11 @@ type WebhookNotifier struct {
 
 // Sends a notification about the IP change
 func (w *WebhookNotifier) Notify(ip string) error {
-	webhookURL := os.Getenv("WEBHOOK_URL")
-
-	data := fmt.Sprintf("IP change detected. New IP set: %s", ip)
-
-	resp, err := http.Post(webhookURL, "application/json", bytes.NewBufferString(data))
+	err := w.sendToWebhook(fmt.Sprintf("IP change detected. New IP set: %s", ip))
 
 	if err != nil {
 		return err
 	}
-
-	defer resp.Body.Close()
 
 	return nil
 }
@@ -42,6 +36,28 @@ func (w *WebhookNotifier) CheckEnv() error {
 	return nil
 }
 
+// Auth sends a welcome message
 func (w *WebhookNotifier) Auth() error {
+	err := w.sendToWebhook("`goip` is starting its watch")
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// sendToWebhook will send the given data to the webhook
+func (w *WebhookNotifier) sendToWebhook(data string) error {
+	webhookURL := os.Getenv("WEBHOOK_URL")
+
+	resp, err := http.Post(webhookURL, "application/json", bytes.NewBufferString(data))
+
+	if err != nil {
+		return err
+	}
+
+	defer resp.Body.Close()
+
 	return nil
 }
