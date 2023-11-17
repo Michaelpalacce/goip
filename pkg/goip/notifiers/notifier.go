@@ -3,7 +3,7 @@ package notifier
 import "fmt"
 
 type Notifier interface {
-	Notify() error
+	Notify(ip string) error
     CheckEnv() error
     Auth() error
 }
@@ -15,7 +15,7 @@ func CreateNotifierBasedOnInput(input string) (Notifier, error) {
 	case "webhook":
 		class = &WebhookNotifier{}
 	default:
-		return nil, fmt.Errorf("could not create a notifier of type: %s", input)
+		return nil, nil 
 	}
 
 	if err := class.CheckEnv(); err != nil {
