@@ -10,7 +10,7 @@ import (
 )
 
 type Watcher struct {
-	IP     string
+	ip     string
 	Client clients.Client
 }
 
@@ -36,12 +36,12 @@ func (w *Watcher) Watch(interval int) {
 		ipToSet := string(publicIp)
 
 		// Checks if an update is needed
-		if w.IP != ipToSet {
+		if w.ip != ipToSet {
 			slog.Debug("IP change detected. Setting new IP", "newIP", ipToSet)
-			w.IP = ipToSet
+			w.ip = ipToSet
 
 			go func() {
-				if err := w.Client.SetIp(w.IP); err != nil {
+				if err := w.Client.SetIp(w.ip); err != nil {
 					slog.Error("error while trying to set IP", "IP", ipToSet)
 				}
 			}()
