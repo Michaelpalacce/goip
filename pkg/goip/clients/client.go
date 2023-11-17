@@ -11,18 +11,18 @@ type Client interface {
 	CheckEnv() error
 }
 
-// CreateClientBasedOnProvider will return an authenticated, fully loaded client
-func CreateClientBasedOnProvider(provider string) (Client, error) {
+// CreateClientBasedOnInput will return an authenticated, fully loaded client
+func CreateClientBasedOnInput(input string) (Client, error) {
 	var client Client
-	switch provider {
+	switch input {
 	case "cloudflare":
 		client = &Cloudflare{}
 	default:
-		return nil, fmt.Errorf("could not create a provider of type: %s", provider)
+		return nil, fmt.Errorf("could not create a provider of type: %s", input)
 	}
 
 	if err := client.CheckEnv(); err != nil {
-		return nil, fmt.Errorf("error while validating provider (%s) environment: %s", provider, err)
+		return nil, fmt.Errorf("error while validating provider (%s) environment: %s", input, err)
 	}
 
 	if err := client.Auth(); err != nil {

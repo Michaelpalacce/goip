@@ -3,15 +3,18 @@ package watcher
 import (
 	"log"
 	"log/slog"
+	"os"
 	"time"
 
 	"github.com/Michaelpalacce/goip/pkg/goip/clients"
 	"github.com/Michaelpalacce/goip/pkg/goip/network"
+	notifier "github.com/Michaelpalacce/goip/pkg/goip/notifiers"
 )
 
 type Watcher struct {
-	ip     string
-	Client clients.Client
+	ip      string
+	Client  clients.Client
+    Notifier notifier.Notifier
 }
 
 // Watch will watch every interval minutes for a change in the in memory ip address and if a change is found, it will update the cloudflare record
@@ -43,6 +46,13 @@ func (w *Watcher) Watch(interval int) {
 			go func() {
 				if err := w.Client.SetIp(w.ip); err != nil {
 					slog.Error("error while trying to set IP", "IP", ipToSet)
+				}
+			}()
+
+			go func() {
+				webhook := os.Getenv("WEBHOOK_URL")
+				if webhook != "" {
+					// Post to the webhook
 				}
 			}()
 		} else {

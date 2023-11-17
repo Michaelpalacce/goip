@@ -32,6 +32,16 @@ go run main.go
 ```
 > This will start `goip` with the default provider `cloudflare` and check for updates every 15 minutes.
 
+## Notifications
+
+### Webhook
+
+Currently only webhook notifications are supported.
+
+| Name | Value | Description |
+|---|---|---|
+| WEBHOOK_URL | - | The webhook to which to post when an update happens |
+
 ## Providers
 
 Providers are what tells goip how to handle the change in IP address.
