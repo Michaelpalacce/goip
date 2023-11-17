@@ -2,10 +2,17 @@ package notifier
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
+	"io"
+	"log/slog"
 	"net/http"
 	"os"
 )
+
+type webhookData struct {
+	Content string `json:"content"`
+}
 
 type WebhookNotifier struct {
 }
@@ -49,12 +56,39 @@ func (w *WebhookNotifier) Auth() error {
 
 // sendToWebhook will send the given data to the webhook
 func (w *WebhookNotifier) sendToWebhook(data string) error {
-	webhookURL := os.Getenv("WEBHOOK_URL")
+	webhookData := webhookData{
+		Content: data,
+	}
 
-	resp, err := http.Post(webhookURL, "application/json", bytes.NewBufferString(data))
+	var (
+		requestBody []byte
+		err         error
+	)
+
+	if requestBody, err = json.Marshal(webhookData); err != nil {
+		return err
+	}
+
+	slog.Debug("Sending to webhook", "data", string(requestBody))
+
+	resp, err := http.Post(os.Getenv("WEBHOOK_URL"), "application/json", bytes.NewBuffer(requestBody))
 
 	if err != nil {
 		return err
+	}
+
+	slog.Debug("Status Code", "code", resp.StatusCode)
+
+	if resp.StatusCode < 200 || resp.StatusCode > 299 {
+		var (
+			err  error
+			body []byte
+		)
+		if body, err = io.ReadAll(resp.Body); err == nil {
+			return fmt.Errorf("error while trying to send to webhook. Error was %s", string(body))
+		} else {
+			return fmt.Errorf("error while parsing response from webhook. Error was %s", err)
+		}
 	}
 
 	defer resp.Body.Close()
