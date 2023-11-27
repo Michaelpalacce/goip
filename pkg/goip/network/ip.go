@@ -8,7 +8,7 @@ import (
 // GetPublicIp will fetch the public IP of the
 // machine that is running goip
 func GetPublicIp() ([]byte, error) {
-	ipProviders := []string{"https://ifconfig.me/ip", "https://icanhazip.com"}
+	ipProviders := []string{"https://icanhazip.com"}
 
 	for _, provider := range ipProviders {
 		ip, err := GetBody(provider)
