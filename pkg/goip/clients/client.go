@@ -7,6 +7,7 @@ import (
 // Client is a general interface implemented by all clients
 type Client interface {
 	Auth() error
+	GetIp() string
 	SetIp(ip string) error
 	CheckEnv() error
 }

@@ -69,7 +69,6 @@ func (c *Cloudflare) CheckEnv() error {
 // Auth to Cloudflare with the given token
 func (c *Cloudflare) Auth() error {
 	api, err := cloudflare.NewWithAPIToken(os.Getenv("CLOUDFLARE_API_TOKEN"))
-
 	if err != nil {
 		return fmt.Errorf("could not authenticate to Cloudflare with the given token, error was: %s", err)
 	}
@@ -90,6 +89,50 @@ func (c Cloudflare) SetIp(ip string) error {
 	}
 
 	return nil
+}
+
+// GetIp returns the public IP from the first zone that has a record
+func (c Cloudflare) GetIp() string {
+	for _, zone := range c.config.Cloudflare.Zones {
+		var (
+			ip  string
+			err error
+		)
+
+		if ip, err = c.getIpFromZone(zone); err != nil {
+			slog.Error("Error while getting IP from zone, will search in next", "zone", zone.Name, "error", err)
+			continue
+		}
+
+		return ip
+	}
+
+	return ""
+}
+
+// getIpFromZone returns the public IP for a specific zone
+func (c Cloudflare) getIpFromZone(zone Zone) (string, error) {
+	zoneID, err := c.api.ZoneIDByName(zone.Name)
+	if err != nil {
+		return "", err
+	}
+	slog.Debug("Found zone", "zoneId", zoneID, "zoneName", zone.Name)
+
+	records, _, err := c.api.ListDNSRecords(context.Background(), cloudflare.ZoneIdentifier(zoneID), cloudflare.ListDNSRecordsParams{})
+	if err != nil {
+		return "", err
+	}
+
+	for _, r := range records {
+		for _, zr := range zone.Records {
+			if r.Type == "A" && r.Name == zr.Name {
+				slog.Debug("Found", "record", r)
+
+				return r.Content, nil
+			}
+		}
+	}
+	return "", fmt.Errorf("could not find an A record for zone: %s", zone.Name)
 }
 
 // setIpForZone sets the public ip for a specific zone
@@ -124,7 +167,6 @@ func (c Cloudflare) setIpForRecord(ip string, zoneID string, record Record) erro
 				Content: ip,
 				Proxied: cloudflare.BoolPtr(record.Proxied),
 			})
-
 			if err != nil {
 				return err
 			}

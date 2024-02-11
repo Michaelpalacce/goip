@@ -3,6 +3,7 @@ package watcher
 import (
 	"log"
 	"log/slog"
+	"strings"
 	"time"
 
 	"github.com/Michaelpalacce/goip/pkg/goip/clients"
@@ -22,6 +23,11 @@ func (w *Watcher) Watch(interval int) {
 		log.Fatal("watcher started, but Client not passed")
 	}
 
+	if w.ip == "" {
+		w.ip = w.Client.GetIp()
+		slog.Info("Fetched ip from Client", "ip", w.ip)
+	}
+
 	for {
 		// Fetch public IP
 		var (
@@ -33,9 +39,9 @@ func (w *Watcher) Watch(interval int) {
 			log.Fatalf("error while trying to fetch public IP: %s", err)
 		}
 
-		slog.Info("Fetched public IP from https://icanhazip.com", "publicIp", string(publicIp))
+		ipToSet := strings.Trim(string(publicIp), "\n")
 
-		ipToSet := string(publicIp)
+		slog.Info("Fetched public IP from https://icanhazip.com", "publicIp", ipToSet)
 
 		// Checks if an update is needed
 		if w.ip != ipToSet {
@@ -47,7 +53,7 @@ func (w *Watcher) Watch(interval int) {
 					slog.Error("error while trying to set IP", "IP", ipToSet, "Error", err)
 				}
 
-                // Notify if a notifier exists
+				// Notify if a notifier exists
 				if w.Notifier != nil {
 					if err := w.Notifier.Notify(w.ip); err != nil {
 						slog.Error("error while notify for IP change", "IP", ipToSet, "Error", err)
